@@ -22,12 +22,11 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	public static Item frenchbread;
 	public static Item druggedfrenchbread;
 	public static List<Integer> leavesBlockIDs = new ArrayList<Integer>();  
-	public static Minecraft mc = null;
 
 
 	@Override
 	public String getVersion() {
-		return "1.4.6-1";
+		return "1.4.7-1";
 	}
 
 	@Override
@@ -42,14 +41,9 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	
 	@Override
 	public void load() {
-		try {
-			mc = ModLoader.getMinecraftInstance();
-		} catch (Error e) {
-		}
-
 		// アイテムの追加
 		int icon = Item.bread.iconIndex;
-		if (isUseIcon && mc != null) {
+		if (isUseIcon && MMM_Helper.isClient) {
 			icon = MMM_Helper.isForge ? 33 : ModLoader.addOverride("/gui/items.png", "/icon/frenchBread.png");
 		}
 		frenchbread = new IFB_ItemFrenchBread(ItemID - 256).setIconIndex(icon).setItemName("FrenchBread");
@@ -68,7 +62,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 			Character.valueOf('b'), Item.bread});
 		// 薬漬けレシピ
 		CraftingManager.getInstance().getRecipeList().add(new IFB_RecipesFrenchBread());
-
+		
 		// 葉っぱリストの構築
 		String[] s = additionalLeaveBlockIDs.split(",");
 		for (String t : s) {
@@ -77,7 +71,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 				leavesBlockIDs.add(iid);
 			}
 		}
-
+		
 	}
 
 	@Override
