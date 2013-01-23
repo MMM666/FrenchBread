@@ -1,4 +1,4 @@
-ï»¿package net.minecraft.src;
+package net.minecraft.src;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,7 +18,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		super(i, 10, 0.6F, false);
 		maxStackSize = 1;
 		setMaxDamage(EnumToolMaterial.GOLD.getMaxUses() / 2);
-		// æ”»æ’ƒåŠ›ã¯æ—§ãƒ€ã‚¤ãƒ¤ã‚½ãƒ¼ãƒ‰ä¸¦ã¿
+		// UŒ‚—Í‚Í‹Œƒ_ƒCƒ„ƒ\[ƒh•À‚İ
 		weaponDamage = 4 + EnumToolMaterial.EMERALD.getDamageVsEntity() * 2;
 		saturationModifier = super.getSaturationModifier();
 	}
@@ -27,17 +27,17 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	public ItemStack onFoodEaten(ItemStack itemstack, World world, EntityPlayer entityplayer) {
 		float rotten = ((float)itemstack.getItemDamage() / (float)getMaxDamage());
 		if (rotten > 0.2F) {
-			// ç—›ã‚“ã ãƒ‘ãƒ³
+			// ’É‚ñ‚¾ƒpƒ“
 			if(!world.isRemote && world.rand.nextFloat() < rotten) {
 				entityplayer.addPotionEffect(new PotionEffect(Potion.hunger.id, 30 * 20, 0));
 			}
 		}
-		// ãƒ‰ãƒ¼ãƒ”ãƒ³ã‚°ãƒ•ãƒ©ãƒ³ã‚¹ãƒ‘ãƒ³
+		// ƒh[ƒsƒ“ƒOƒtƒ‰ƒ“ƒXƒpƒ“
 		if (!entityplayer.worldObj.isRemote) {
 			addPotionEffect(entityplayer, null, itemstack);
 		}
 		
-		// è…¹æŒã¡
+		// • ‚¿
 		saturationModifier = 0.6F * (1.0F - rotten);
 		itemstack = super.onFoodEaten(itemstack, world, entityplayer);
 		
@@ -50,7 +50,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 	public void addPotionEffect(EntityLiving pTarget, EntityLiving pAttaker, ItemStack pItemStack) {
-		// ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®åŠ¹æœã‚’ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¸æŠ•ä¸
+		// ƒ|[ƒVƒ‡ƒ“‚ÌŒø‰Ê‚ğƒ^[ƒQƒbƒg‚Ö“Š—^
 		int[] el = getDruggedEffects(pItemStack);
 		if (el != null) {
 			for (int li = 0; li < el.length; li++) {
@@ -62,7 +62,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 						int lpid = potioneffect.getPotionID();
 
 						if (Potion.potionTypes[lpid].isInstant()) {
-							// ãƒ€ãƒ¡ãƒã®åŠ¹æœã‚’å¼·åˆ¶åŠ ç®—
+							// ƒ_ƒƒ|‚ÌŒø‰Ê‚ğ‹­§‰ÁZ
 							pTarget.hurtResistantTime = 0;
 							Potion.potionTypes[lpid].affectEntity(pAttaker, pTarget, potioneffect.getAmplifier(), 1.0F);
 							pTarget.hurtResistantTime = 0;
@@ -77,11 +77,11 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	@Override
 	public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1) {
-		// å¼·åˆ¶ãƒ‰ãƒ¼ãƒ”ãƒ³ã‚°
+		// ‹­§ƒh[ƒsƒ“ƒO
 		if (!entityliving1.worldObj.isRemote) {
 			addPotionEffect(entityliving, entityliving1, itemstack);
 		}
-		// æ¿¡ã‚Œã¦ã‚‹ã¨æ¶ˆè€—å¤šé
+		// ”G‚ê‚Ä‚é‚ÆÁ–Õ‘½‰ß
 		int damage = (entityliving.isWet() || entityliving1.isWet()) ? 4 : 1; 
 		itemstack.damageItem(damage, entityliving1);
 
@@ -94,14 +94,14 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		int damage = par7EntityLiving.isWet() ? 8 : 2;
 		par1ItemStack.damageItem(damage, par7EntityLiving);
 		if (mod_IFB_FrenchBread.isTathujin) {
-			// åœŸå°åˆ¤å®š
+			// “y‘ä”»’è
 			World world1 = par7EntityLiving.worldObj;
 			int baseblockid = world1.getBlockId(par4, par5 - 1, par6);
 			if (par5 > 0 && 
 					(Block.blocksList[par3] instanceof BlockLog || Block.blocksList[par3] instanceof BlockMushroomCap) &&
 					(baseblockid == Block.dirt.blockID || (baseblockid == Block.grass.blockID && mod_IFB_FrenchBread.isGrassBlock)) && 
 					world1.getBlockId(par4, par5 + 1, par6) == par3) {
-				// ã“ã®æ™‚ç‚¹ã§æ—¢ã«ãƒ–ãƒ­ãƒƒã‚¯ã¯ç ´å£Šã•ã‚Œã¦ã„ã‚‹ã®ã§ãƒ¡ã‚¿ãƒ‡ãƒ¼ã‚¿ãŒå–ã‚Œãªã„
+				// ‚±‚Ì“_‚ÅŠù‚ÉƒuƒƒbƒN‚Í”j‰ó‚³‚ê‚Ä‚¢‚é‚Ì‚Åƒƒ^ƒf[ƒ^‚ªæ‚ê‚È‚¢
 				int metadata = world1.getBlockMetadata(par4, par5 + 1, par6);
 				checkTATHUJIN(par1ItemStack, par3, par4, par5, par6, metadata, par7EntityLiving, par3, metadata, 0);
 			}
@@ -131,7 +131,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-		// ã‚¬ãƒ¼ãƒ‰åˆ¤å®š
+		// ƒK[ƒh”»’è
 		if (!entityplayer.foodStats.needFood()) {
 			setGuard(itemstack, true, entityplayer);
 			entityplayer.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
@@ -144,19 +144,19 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	@Override
 	public boolean canHarvestBlock(Block block) {
-		// é€šå¸¸ç ´å£Šã§ã¯ä½•è€…ã‚’ã‚‚å›åã¯ã§ããªã„
+		// ’Êí”j‰ó‚Å‚Í‰½Ò‚ğ‚à‰ñû‚Í‚Å‚«‚È‚¢
 		return false;
 	}
 
 	@Override
 	public float getSaturationModifier() {
-		// è…¹æŒã¡è¨­å®š
+		// • ‚¿İ’è
 		return saturationModifier;
 	}
 
 	@Override
 	public void addInformation(ItemStack itemstack, EntityPlayer par2EntityPlayer, List list, boolean par4) {
-		// åŠ¹æœæ–‡å­—åˆ—ã®è¿½åŠ 
+		// Œø‰Ê•¶š—ñ‚Ì’Ç‰Á
 		if (!hasEffect(itemstack)) {
 			return;
 		}
@@ -191,7 +191,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	@Override
 	public boolean hasEffect(ItemStack itemstack) {
-		// ãƒ‰ãƒ¼ãƒ”ãƒ³ã‚°è¡¨ç¤º
+		// ƒh[ƒsƒ“ƒO•\¦
 		return itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("potions");
 	}
 
@@ -199,12 +199,12 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int j, int k, int l, int metadataOrig, EntityLiving entityliving, int blockidTarget, int metadataTarget, int count) {
 		World world1 = entityliving.worldObj;
-		// ç¯„å›²åˆ¤å®š
+		// ”ÍˆÍ”»’è
 		if (count > 5) return;
-		// é”äººã¯ä¸€å¤ªåˆ€ã§å¤§æœ¨ã‚’ã‚‚åˆ‡ã‚Šæ‰•ã†ã¨ã„ã†
+		// ’Bl‚Íˆê‘¾“‚Å‘å–Ø‚ğ‚àØ‚è•¥‚¤‚Æ‚¢‚¤
 		if (world1.setBlockWithNotify(j, k, l, 0)) {
 			itemstack.damageItem(1, entityliving);
-			// ã‚¢ã‚¤ãƒ†ãƒ ã®ãƒ‰ãƒ­ãƒƒãƒ—
+			// ƒAƒCƒeƒ€‚Ìƒhƒƒbƒv
 			Block bb = Block.blocksList[blockidTarget];
 			bb.dropBlockAsItem_do(world1, j, k, l, new ItemStack(blockidTarget, 1, bb.damageDropped(metadataTarget)));
 		}
@@ -230,7 +230,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 	protected static boolean isGuard(ItemStack pitemstack) {
-		// é˜²å¾¡ï¼Ÿ
+		// –hŒäH
 		if (pitemstack.hasTagCompound()) {
 			return pitemstack.getTagCompound().getBoolean("isGuard");
 		} else {
@@ -239,13 +239,13 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 	protected static void setGuard(ItemStack pitemstack, boolean pmode, EntityPlayer pplayer) {
-		// é£Ÿã¹ã‚‹ã‹é˜²å¾¡ã‹ã®è¨­å®š
+		// H‚×‚é‚©–hŒä‚©‚Ìİ’è
 		if (!pitemstack.hasTagCompound()) {
 			pitemstack.setTagCompound(new NBTTagCompound());
 		}
 		NBTTagCompound lnbt = pitemstack.getTagCompound();
 		if (lnbt.getBoolean("isGuard") != pmode) {
-			// è¨­å®šå€¤ã¨é•ã†å ´åˆã¯å€¤ã‚’ã‚»ãƒƒãƒˆ
+			// İ’è’l‚Æˆá‚¤ê‡‚Í’l‚ğƒZƒbƒg
 			lnbt.setBoolean("isGuard", pmode);
 		}
 		
@@ -254,7 +254,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 
 	public static void setDruggedEffects(ItemStack itemstack, int[] eff) {
-		// ãƒ‰ãƒ¼ãƒ”ãƒ³ã‚°åŠ¹æœã‚’è¨­å®š
+		// ƒh[ƒsƒ“ƒOŒø‰Ê‚ğİ’è
 		if (!itemstack.hasTagCompound()) {
 			itemstack.setTagCompound(new NBTTagCompound());
 		}
@@ -272,7 +272,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 	public static int[] getDruggedEffects(ItemStack itemstack) {
-		// ãƒ‰ãƒ¼ãƒ”ãƒ³ã‚°åŠ¹æœã‚’å–ã‚Šå‡ºã™
+		// ƒh[ƒsƒ“ƒOŒø‰Ê‚ğæ‚èo‚·
 		int eff[] = {0, 0, 0, 0, 0, 0};
 
 		if (!itemstack.hasTagCompound()) {

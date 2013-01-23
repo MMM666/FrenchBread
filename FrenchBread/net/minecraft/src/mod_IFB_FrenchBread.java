@@ -1,4 +1,4 @@
-ï»¿package net.minecraft.src;
+package net.minecraft.src;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	@MLProp(info="Leaves BlockID.")
 	public static String additionalLeaveBlockIDs = "18";
 
-	// è–¬è†³ãƒ‘ãƒ³ã‚’åˆ¥ã«ã—ã¦ã„ã‚‹ã®ã¯ã‚¹ã‚¿ãƒƒã‚¯å¯¾ç­–
+	// –ò‘Vƒpƒ“‚ğ•Ê‚É‚µ‚Ä‚¢‚é‚Ì‚ÍƒXƒ^ƒbƒN‘Îô
 	public static Item frenchbread;
 	public static Item druggedfrenchbread;
 	public static List<Integer> leavesBlockIDs = new ArrayList<Integer>();  
@@ -41,7 +41,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	
 	@Override
 	public void load() {
-		// ã‚¢ã‚¤ãƒ†ãƒ ã®è¿½åŠ 
+		// ƒAƒCƒeƒ€‚Ì’Ç‰Á
 		int icon = Item.bread.iconIndex;
 		if (isUseIcon && MMM_Helper.isClient) {
 			icon = MMM_Helper.isForge ? 33 : ModLoader.addOverride("/gui/items.png", "/icon/frenchBread.png");
@@ -50,20 +50,20 @@ public class mod_IFB_FrenchBread extends BaseMod {
 		druggedfrenchbread = new IFB_ItemFrenchBread(ItemID + 1 - 256).setIconIndex(icon).setItemName("FrenchBreadDrugged");
 		MMM_Helper.setForgeIcon(frenchbread);
 		MMM_Helper.setForgeIcon(druggedfrenchbread);
-		// åå‰
+		// –¼‘O
 		ModLoader.addName(frenchbread, "French Bread");
-		ModLoader.addName(frenchbread, "ja_JP", "ãƒ•ãƒ©ãƒ³ã‚¹ãƒ‘ãƒ³");
+		ModLoader.addName(frenchbread, "ja_JP", "ƒtƒ‰ƒ“ƒXƒpƒ“");
 		ModLoader.addName(druggedfrenchbread, "Drugged French Bread");
-		ModLoader.addName(druggedfrenchbread, "ja_JP", "è–¬è†³ãƒ•ãƒ©ãƒ³ã‚¹ãƒ‘ãƒ³");
+		ModLoader.addName(druggedfrenchbread, "ja_JP", "–ò‘Vƒtƒ‰ƒ“ƒXƒpƒ“");
 		
-		// é€šå¸¸ãƒ¬ã‚·ãƒ”
+		// ’ÊíƒŒƒVƒs
 		ModLoader.addRecipe(new ItemStack(frenchbread), new Object[] {
 			"b", "b", "b",
 			Character.valueOf('b'), Item.bread});
-		// è–¬æ¼¬ã‘ãƒ¬ã‚·ãƒ”
+		// –ò’Ğ‚¯ƒŒƒVƒs
 		CraftingManager.getInstance().getRecipeList().add(new IFB_RecipesFrenchBread());
 		
-		// è‘‰ã£ã±ãƒªã‚¹ãƒˆã®æ§‹ç¯‰
+		// —t‚Á‚ÏƒŠƒXƒg‚Ì\’z
 		String[] s = additionalLeaveBlockIDs.split(",");
 		for (String t : s) {
 			Integer iid = Integer.valueOf(t.trim());
@@ -76,7 +76,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 
 	@Override
 	public void takenFromCrafting(EntityPlayer var1, ItemStack var2, IInventory var3) {
-		// ç©ºãƒœãƒˆãƒ«ã‚’è¿”ã™
+		// ‹óƒ{ƒgƒ‹‚ğ•Ô‚·
 		for (int li = 0; li < var3.getSizeInventory(); li++) {
 			ItemStack lis = var3.getStackInSlot(li);
 			if (lis != null && lis.getItem() instanceof ItemPotion) {
