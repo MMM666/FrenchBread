@@ -9,8 +9,6 @@ public class mod_IFB_FrenchBread extends BaseMod {
 
 	@MLProp(info="Item's ID.(ShiftedIndex) +0 .. +1", max=32000)
 	public static int ItemID = 22205;
-	@MLProp(info="use Icon.(false is bread icon)")
-	public static boolean isUseIcon = true;
 	@MLProp(info="enable TATHUJIN mode.")
 	public static boolean isTathujin = true;
 	@MLProp(info="Check GrassBlock.")
@@ -26,7 +24,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return "1.4.7-1";
+		return "1.5.0-1";
 	}
 
 	@Override
@@ -42,12 +40,8 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	@Override
 	public void load() {
 		// アイテムの追加
-		int icon = Item.bread.iconIndex;
-		if (isUseIcon && MMM_Helper.isClient) {
-			icon = MMM_Helper.isForge ? 33 : ModLoader.addOverride("/gui/items.png", "/icon/frenchBread.png");
-		}
-		frenchbread = new IFB_ItemFrenchBread(ItemID - 256).setIconIndex(icon).setItemName("FrenchBread");
-		druggedfrenchbread = new IFB_ItemFrenchBread(ItemID + 1 - 256).setIconIndex(icon).setItemName("FrenchBreadDrugged");
+		frenchbread = (new IFB_ItemFrenchBread(ItemID - 256, false)).setUnlocalizedName("FrenchBread");
+		druggedfrenchbread = (new IFB_ItemFrenchBread(ItemID + 1 - 256, true)).setUnlocalizedName("FrenchBreadDrugged");
 		MMM_Helper.setForgeIcon(frenchbread);
 		MMM_Helper.setForgeIcon(druggedfrenchbread);
 		// 名前

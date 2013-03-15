@@ -1,12 +1,7 @@
 package net.minecraft.src;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import net.minecraft.client.Minecraft;
 
 public class IFB_ItemFrenchBread extends ItemFood {
 
@@ -14,34 +9,38 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	private int weaponDamage;
 
 
-	public IFB_ItemFrenchBread(int i) {
+	public IFB_ItemFrenchBread(int i, boolean pHidden) {
 		super(i, 10, 0.6F, false);
 		maxStackSize = 1;
 		setMaxDamage(EnumToolMaterial.GOLD.getMaxUses() / 2);
 		// 攻撃力は旧ダイヤソード並み
 		weaponDamage = 4 + EnumToolMaterial.EMERALD.getDamageVsEntity() * 2;
 		saturationModifier = super.getSaturationModifier();
+		if (pHidden) {
+			setCreativeTab(null);
+		}
 	}
 
 	@Override
-	public ItemStack onFoodEaten(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-		float rotten = ((float)itemstack.getItemDamage() / (float)getMaxDamage());
+	public ItemStack onEaten(ItemStack par1ItemStack, World par2World,
+			EntityPlayer par3EntityPlayer) {
+		float rotten = ((float)par1ItemStack.getItemDamage() / (float)getMaxDamage());
 		if (rotten > 0.2F) {
 			// 痛んだパン
-			if(!world.isRemote && world.rand.nextFloat() < rotten) {
-				entityplayer.addPotionEffect(new PotionEffect(Potion.hunger.id, 30 * 20, 0));
+			if(!par2World.isRemote && par2World.rand.nextFloat() < rotten) {
+				par3EntityPlayer.addPotionEffect(new PotionEffect(Potion.hunger.id, 30 * 20, 0));
 			}
 		}
 		// ドーピングフランスパン
-		if (!entityplayer.worldObj.isRemote) {
-			addPotionEffect(entityplayer, null, itemstack);
+		if (!par3EntityPlayer.worldObj.isRemote) {
+			addPotionEffect(par3EntityPlayer, null, par1ItemStack);
 		}
 		
 		// 腹持ち
 		saturationModifier = 0.6F * (1.0F - rotten);
-		itemstack = super.onFoodEaten(itemstack, world, entityplayer);
+		par1ItemStack = super.onEaten(par1ItemStack, par2World, par3EntityPlayer);
 		
-		return itemstack;
+		return par1ItemStack;
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 					for (int lj = 0; lj < list1.size(); lj++) {
 						PotionEffect potioneffect = (PotionEffect)list1.get(lj);
 						int lpid = potioneffect.getPotionID();
-
+						
 						if (Potion.potionTypes[lpid].isInstant()) {
 							// ダメポの効果を強制加算
 							pTarget.hurtResistantTime = 0;
@@ -84,7 +83,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		// 濡れてると消耗多過
 		int damage = (entityliving.isWet() || entityliving1.isWet()) ? 4 : 1; 
 		itemstack.damageItem(damage, entityliving1);
-
+		
 		return true;
 	}
 
@@ -197,31 +196,32 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 
 
-	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int j, int k, int l, int metadataOrig, EntityLiving entityliving, int blockidTarget, int metadataTarget, int count) {
+	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int px, int py, int pz, int metadataOrig, EntityLiving entityliving, int blockidTarget, int metadataTarget, int count) {
 		World world1 = entityliving.worldObj;
 		// 範囲判定
 		if (count > 5) return;
 		// 達人は一太刀で大木をも切り払うという
-		if (world1.setBlockWithNotify(j, k, l, 0)) {
+		if (world1.setBlockAndMetadataWithNotify(px, py, pz, 0, 0, 2)) {
 			itemstack.damageItem(1, entityliving);
 			// アイテムのドロップ
 			Block bb = Block.blocksList[blockidTarget];
-			bb.dropBlockAsItem_do(world1, j, k, l, new ItemStack(blockidTarget, 1, bb.damageDropped(metadataTarget)));
+			bb.dropBlockAsItem_do(world1, px, py, pz, new ItemStack(blockidTarget, 1, bb.damageDropped(metadataTarget)));
 		}
-		for (int y = (Block.blocksList[blockidTarget] instanceof BlockLog) ? 0 : -1; y < 2; y ++) {
+		for (int ly = (Block.blocksList[blockidTarget] instanceof BlockLog) ? 0 : -1; ly < 2; ly ++) {
 			for (int z = -1; z < 2; z++) {
 				for (int x = -1; x < 2; x++) {
-					int blockid = world1.getBlockId(j + x, k + y, l + z);
+					int blockid = world1.getBlockId(px + x, py + ly, pz + z);
 					if (blockid == blockidTarget || (Block.blocksList[blockidOrig] instanceof BlockLog && Block.blocksList[blockid] instanceof BlockLeavesBase)) {
-						int blockmeta = world1.getBlockMetadata(j + x, k + y, l + z);
+						int blockmeta = world1.getBlockMetadata(px + x, py + ly, pz + z);
 						int lcount = count;
 						if (mod_IFB_FrenchBread.leavesBlockIDs.contains(blockid)) {
 							blockmeta &= 0x03;
 							lcount++;
+						} else if (Block.blocksList[blockid] instanceof BlockMushroomCap) {
+							blockmeta = metadataOrig;
 						}
-						else if (Block.blocksList[blockid] instanceof BlockMushroomCap) blockmeta = metadataOrig;
 						if (blockmeta == metadataOrig) {
-							checkTATHUJIN(itemstack, blockidOrig, j + x, k + y, l + z, metadataOrig, entityliving, blockid, blockmeta, lcount);
+							checkTATHUJIN(itemstack, blockidOrig, px + x, py + ly, pz + z, metadataOrig, entityliving, blockid, blockmeta, lcount);
 						}
 					}
 				}
