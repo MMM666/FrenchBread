@@ -42,8 +42,6 @@ public class mod_IFB_FrenchBread extends BaseMod {
 		// アイテムの追加
 		frenchbread = (new IFB_ItemFrenchBread(ItemID - 256, false)).setUnlocalizedName("FrenchBread");
 		druggedfrenchbread = (new IFB_ItemFrenchBread(ItemID + 1 - 256, true)).setUnlocalizedName("FrenchBreadDrugged");
-		MMM_Helper.setForgeIcon(frenchbread);
-		MMM_Helper.setForgeIcon(druggedfrenchbread);
 		// 名前
 		ModLoader.addName(frenchbread, "French Bread");
 		ModLoader.addName(frenchbread, "ja_JP", "フランスパン");
