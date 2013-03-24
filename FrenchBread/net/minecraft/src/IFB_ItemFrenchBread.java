@@ -201,7 +201,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		// 範囲判定
 		if (count > 5) return;
 		// 達人は一太刀で大木をも切り払うという
-		if (world1.setBlockAndMetadataWithNotify(px, py, pz, 0, 0, 2)) {
+		if (world1.setBlockToAir(px, py, pz)) {
 			itemstack.damageItem(1, entityliving);
 			// アイテムのドロップ
 			Block bb = Block.blocksList[blockidTarget];
