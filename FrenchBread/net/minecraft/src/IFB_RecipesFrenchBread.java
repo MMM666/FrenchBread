@@ -6,7 +6,8 @@ import java.util.List;
 public class IFB_RecipesFrenchBread implements IRecipe {
 
 	private ItemStack fItem = new ItemStack(mod_IFB_FrenchBread.druggedfrenchbread);
-	
+
+
 	@Override
 	public boolean matches(InventoryCrafting var1, World var2) {
 		int lcount = 0;
@@ -30,7 +31,6 @@ public class IFB_RecipesFrenchBread implements IRecipe {
 		if (lcount == 1 && ldust == 0) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -38,7 +38,7 @@ public class IFB_RecipesFrenchBread implements IRecipe {
 	public ItemStack getCraftingResult(InventoryCrafting var1) {
 		int lpe[] = {0, 0, 0, 0, 0, 0};
 		int lj = 0;
-
+		
 		for (int li = 0; li < var1.getSizeInventory() && lj < 6; li++) {
 			ItemStack ldrag = var1.getStackInSlot(li);
 			if (ldrag != null && ldrag.getItem() instanceof ItemPotion && ldrag.hasEffect()) {

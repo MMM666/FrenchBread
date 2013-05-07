@@ -24,7 +24,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return "1.5.1-1";
+		return "1.5.2-1";
 	}
 
 	@Override
@@ -39,6 +39,9 @@ public class mod_IFB_FrenchBread extends BaseMod {
 	
 	@Override
 	public void load() {
+		// MMMLibのRevisionチェック
+		MMM_Helper.checkRevision("1");
+		
 		// アイテムの追加
 		frenchbread = (new IFB_ItemFrenchBread(ItemID - 256, false)).setUnlocalizedName("FrenchBread");
 		druggedfrenchbread = (new IFB_ItemFrenchBread(ItemID + 1 - 256, true)).setUnlocalizedName("FrenchBreadDrugged");
