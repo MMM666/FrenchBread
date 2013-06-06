@@ -41,7 +41,7 @@ public class IFB_RecipesFrenchBread implements IRecipe {
 		
 		for (int li = 0; li < var1.getSizeInventory() && lj < 6; li++) {
 			ItemStack ldrag = var1.getStackInSlot(li);
-			if (ldrag != null && ldrag.getItem() instanceof ItemPotion && ldrag.hasEffect()) {
+			if (ldrag != null && ldrag.getItem() instanceof ItemPotion && ldrag.isItemEnchanted()) {
 				lpe[lj++] = ldrag.getItemDamage();
 			}
 		}
