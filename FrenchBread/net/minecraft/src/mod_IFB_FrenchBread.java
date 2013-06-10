@@ -24,7 +24,7 @@ public class mod_IFB_FrenchBread extends BaseMod {
 
 	@Override
 	public String getVersion() {
-		return "1.5.2-2";
+		return "1.5.2-3";
 	}
 
 	@Override
