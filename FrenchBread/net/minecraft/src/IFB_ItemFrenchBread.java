@@ -3,10 +3,12 @@ package net.minecraft.src;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Multimap;
+
 public class IFB_ItemFrenchBread extends ItemFood {
 
 	private float saturationModifier;
-	private int weaponDamage;
+	private float weaponDamage;
 
 
 	public IFB_ItemFrenchBread(int i, boolean pHidden) {
@@ -14,7 +16,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		maxStackSize = 1;
 		setMaxDamage(EnumToolMaterial.GOLD.getMaxUses() / 2);
 		// 攻撃力は旧ダイヤソード並み
-		weaponDamage = 4 + EnumToolMaterial.EMERALD.getDamageVsEntity() * 2;
+		weaponDamage = 3F + EnumToolMaterial.EMERALD.getDamageVsEntity() * 2F;
 		saturationModifier = super.getSaturationModifier();
 		if (pHidden) {
 			setCreativeTab(null);
@@ -48,7 +50,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		return 15F;
 	}
 
-	public void addPotionEffect(EntityLiving pTarget, EntityLiving pAttaker, ItemStack pItemStack) {
+	public void addPotionEffect(EntityLivingBase pTarget, EntityLivingBase pAttaker, ItemStack pItemStack) {
 		// ポーションの効果をターゲットへ投与
 		int[] el = getDruggedEffects(pItemStack);
 		if (el != null) {
@@ -75,7 +77,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 	@Override
-	public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1) {
+	public boolean hitEntity(ItemStack itemstack, EntityLivingBase entityliving, EntityLivingBase entityliving1) {
 		// 強制ドーピング
 		if (!entityliving1.worldObj.isRemote) {
 			addPotionEffect(entityliving, entityliving1, itemstack);
@@ -89,7 +91,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	@Override
 	public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World,
-			int par3, int par4, int par5, int par6, EntityLiving par7EntityLiving) {
+			int par3, int par4, int par5, int par6, EntityLivingBase par7EntityLiving) {
 		int damage = par7EntityLiving.isWet() ? 8 : 2;
 		par1ItemStack.damageItem(damage, par7EntityLiving);
 		if (mod_IFB_FrenchBread.isTathujin) {
@@ -108,9 +110,13 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		return true;
 	}
 
-	@Override
-	public int getDamageVsEntity(Entity entity) {
-		return weaponDamage;
+	public Multimap func_111205_h() {
+		// ダメージの設定は此処で行われる。
+		// 基本ダメージ（１）＋追加ダメージとなるので、値は１引くのを忘れないように。
+		// UUID何に使ってんだろう・・？
+		Multimap var1 = super.func_111205_h();
+		var1.put(SharedMonsterAttributes.field_111264_e.func_111108_a(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)this.weaponDamage, 0));
+		return var1;
 	}
 
 	@Override
@@ -196,7 +202,8 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 
 
-	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int px, int py, int pz, int metadataOrig, EntityLiving entityliving, int blockidTarget, int metadataTarget, int count) {
+	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int px, int py, int pz,
+			int metadataOrig, EntityLivingBase entityliving, int blockidTarget, int metadataTarget, int count) {
 		World world1 = entityliving.worldObj;
 		// 範囲判定
 		if (count > 5) return;

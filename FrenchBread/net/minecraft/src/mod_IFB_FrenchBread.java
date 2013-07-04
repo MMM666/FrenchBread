@@ -3,8 +3,6 @@ package net.minecraft.src;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-
 public class mod_IFB_FrenchBread extends BaseMod {
 
 	@MLProp(info="Item's ID.(ShiftedIndex) +0 .. +1", max=32000)
@@ -43,8 +41,8 @@ public class mod_IFB_FrenchBread extends BaseMod {
 		MMM_Helper.checkRevision("1");
 		
 		// アイテムの追加
-		frenchbread = (new IFB_ItemFrenchBread(ItemID - 256, false)).setUnlocalizedName("FrenchBread");
-		druggedfrenchbread = (new IFB_ItemFrenchBread(ItemID + 1 - 256, true)).setUnlocalizedName("FrenchBreadDrugged");
+		frenchbread = (new IFB_ItemFrenchBread(ItemID - 256, false)).setUnlocalizedName("FrenchBread").func_111206_d("FrenchBread");
+		druggedfrenchbread = (new IFB_ItemFrenchBread(ItemID + 1 - 256, true)).setUnlocalizedName("FrenchBreadDrugged").func_111206_d("FrenchBreadDrugged");
 		// 名前
 		ModLoader.addName(frenchbread, "French Bread");
 		ModLoader.addName(frenchbread, "ja_JP", "フランスパン");
