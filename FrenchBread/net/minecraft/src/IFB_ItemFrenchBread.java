@@ -110,6 +110,7 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		return true;
 	}
 
+	@Override
 	public Multimap func_111205_h() {
 		// ダメージの設定は此処で行われる。
 		// 基本ダメージ（１）＋追加ダメージとなるので、値は１引くのを忘れないように。
