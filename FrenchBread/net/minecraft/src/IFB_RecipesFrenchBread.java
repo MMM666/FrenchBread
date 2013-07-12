@@ -36,18 +36,19 @@ public class IFB_RecipesFrenchBread implements IRecipe {
 
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting var1) {
-		int lpe[] = {0, 0, 0, 0, 0, 0};
-		int lj = 0;
+		List<PotionEffect> lplist = new ArrayList<PotionEffect>();
+		boolean lflag = false;
 		
-		for (int li = 0; li < var1.getSizeInventory() && lj < 6; li++) {
+		for (int li = 0; li < var1.getSizeInventory(); li++) {
 			ItemStack ldrag = var1.getStackInSlot(li);
 			if (ldrag != null && ldrag.getItem() instanceof ItemPotion && MMM_Helper.hasEffect(ldrag)) {
-				lpe[lj++] = ldrag.getItemDamage();
+				lplist.addAll((List<PotionEffect>)((ItemPotion)ldrag.getItem()).getEffects(ldrag));
+				lflag = true;
 			}
 		}
-		if (lj > 0) {
+		if (lflag) {
 			ItemStack lis = fItem.copy();
-			IFB_ItemFrenchBread.setDruggedEffects(lis, lpe);
+			IFB_ItemFrenchBread.setDruggedEffects(lis, lplist);
 			return lis;
 		}
 		

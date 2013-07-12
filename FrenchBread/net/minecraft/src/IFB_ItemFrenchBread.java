@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,25 +53,18 @@ public class IFB_ItemFrenchBread extends ItemFood {
 
 	public void addPotionEffect(EntityLivingBase pTarget, EntityLivingBase pAttaker, ItemStack pItemStack) {
 		// ポーションの効果をターゲットへ投与
-		int[] el = getDruggedEffects(pItemStack);
-		if (el != null) {
-			for (int li = 0; li < el.length; li++) {
-				if (el[li] == 0) continue;
-				List list1 = Item.potion.getEffects(el[li]);
-				if(list1 != null) {
-					for (int lj = 0; lj < list1.size(); lj++) {
-						PotionEffect potioneffect = (PotionEffect)list1.get(lj);
-						int lpid = potioneffect.getPotionID();
-						
-						if (Potion.potionTypes[lpid].isInstant()) {
-							// ダメポの効果を強制加算
-							pTarget.hurtResistantTime = 0;
-							Potion.potionTypes[lpid].affectEntity(pAttaker, pTarget, potioneffect.getAmplifier(), 1.0F);
-							pTarget.hurtResistantTime = 0;
-						} else {
-							pTarget.addPotionEffect(new PotionEffect(potioneffect));
-						}
-					}
+		List<PotionEffect> lplist = getDruggedEffects(pItemStack);
+		if (!lplist.isEmpty()) {
+			for (PotionEffect lpe : lplist) {
+				int lpid = lpe.getPotionID();
+				
+				if (Potion.potionTypes[lpid].isInstant()) {
+					// ダメポの効果を強制加算
+					pTarget.hurtResistantTime = 0;
+					Potion.potionTypes[lpid].affectEntity(pAttaker, pTarget, lpe.getAmplifier(), 1.0F);
+					pTarget.hurtResistantTime = 0;
+				} else {
+					pTarget.addPotionEffect(new PotionEffect(lpe));
 				}
 			}
 		}
@@ -96,15 +90,14 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		par1ItemStack.damageItem(damage, par7EntityLiving);
 		if (mod_IFB_FrenchBread.isTathujin) {
 			// 土台判定
-			World world1 = par7EntityLiving.worldObj;
-			int baseblockid = world1.getBlockId(par4, par5 - 1, par6);
+			int baseblockid = par2World.getBlockId(par4, par5 - 1, par6);
 			if (par5 > 0 && 
 					(Block.blocksList[par3] instanceof BlockLog || Block.blocksList[par3] instanceof BlockMushroomCap) &&
 					(baseblockid == Block.dirt.blockID || (baseblockid == Block.grass.blockID && mod_IFB_FrenchBread.isGrassBlock)) && 
-					world1.getBlockId(par4, par5 + 1, par6) == par3) {
+					par2World.getBlockId(par4, par5 + 1, par6) == par3) {
 				// この時点で既にブロックは破壊されているのでメタデータが取れない
-				int metadata = world1.getBlockMetadata(par4, par5 + 1, par6);
-				checkTATHUJIN(par1ItemStack, par3, par4, par5, par6, metadata, par7EntityLiving, par3, metadata, 0);
+				int metadata = par2World.getBlockMetadata(par4, par5 + 1, par6);
+				checkTATHUJIN(par1ItemStack, par2World, par3, par4, par5, par6, metadata, par7EntityLiving, par3, metadata, 0);
 			}
 		}
 		return true;
@@ -166,61 +159,59 @@ public class IFB_ItemFrenchBread extends ItemFood {
 		if (!hasEffect(itemstack)) {
 			return;
 		}
-		int[] el = getDruggedEffects(itemstack);
-		if (el != null) {
-			for (int i = 0; i < el.length; i++) {
-				if (el[i] == 0) continue;
-				List list1 = Item.potion.getEffects(el[i]);
-				if (list1 != null && !list1.isEmpty()) {
-					for (Iterator iterator = list1.iterator(); iterator.hasNext();) {
-						PotionEffect potioneffect = (PotionEffect)iterator.next();
-						String s1 = StatCollector.translateToLocal(potioneffect.getEffectName()).trim();
-						if (potioneffect.getAmplifier() > 0) {
-							s1 = (new StringBuilder()).append(s1).append(" ").append(StatCollector.translateToLocal((new StringBuilder()).append("potion.potency.").append(potioneffect.getAmplifier()).toString()).trim()).toString();
-						}
-						if (potioneffect.getDuration() > 20) {
-							s1 = (new StringBuilder()).append(s1).append(" (").append(Potion.getDurationString(potioneffect)).append(")").toString();
-						}
-						if (Potion.potionTypes[potioneffect.getPotionID()].isBadEffect()) {
-							list.add((new StringBuilder()).append("\247c").append(s1).toString());
-						} else {
-							list.add((new StringBuilder()).append("\2477").append(s1).toString());
-						}
-					}
+		List<PotionEffect> lplist = getDruggedEffects(itemstack);
+		if (!lplist.isEmpty()) {
+			for (PotionEffect lpe : lplist) {
+				String lstr = StatCollector.translateToLocal(lpe.getEffectName()).trim();
+				if (lpe.getAmplifier() > 0) {
+					lstr = lstr + " " + StatCollector.translateToLocal("potion.potency." + lpe.getAmplifier()).trim();
+				}
+				if (lpe.getDuration() > 20) {
+					lstr = lstr + " (" + Potion.getDurationString(lpe) + ")";
+				}
+				if (Potion.potionTypes[lpe.getPotionID()].isBadEffect()) {
+					list.add(EnumChatFormatting.RED + lstr);
 				} else {
-					String s = StatCollector.translateToLocal("potion.empty").trim();
-					list.add((new StringBuilder()).append("\2477").append(s).toString());
+					list.add(EnumChatFormatting.GRAY + lstr);
 				}
 			}
+		} else {
+			String s = StatCollector.translateToLocal("potion.empty").trim();
+			list.add((new StringBuilder()).append("\2477").append(s).toString());
 		}
 	}
 
 	@Override
 	public boolean hasEffect(ItemStack itemstack) {
 		// ドーピング表示
-		return itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("potions");
+		return !getDruggedEffects(itemstack).isEmpty();
 	}
 
 
 
-	public static void checkTATHUJIN(ItemStack itemstack, int blockidOrig, int px, int py, int pz,
+	public static void checkTATHUJIN(ItemStack itemstack, World pWorld, int blockidOrig, int px, int py, int pz,
 			int metadataOrig, EntityLivingBase entityliving, int blockidTarget, int metadataTarget, int count) {
-		World world1 = entityliving.worldObj;
 		// 範囲判定
 		if (count > 5) return;
 		// 達人は一太刀で大木をも切り払うという
-		if (world1.setBlockToAir(px, py, pz)) {
+		if (pWorld.setBlockToAir(px, py, pz)) {
 			itemstack.damageItem(1, entityliving);
 			// アイテムのドロップ
+			int llastecount = pWorld.loadedEntityList.size();
 			Block bb = Block.blocksList[blockidTarget];
-			bb.dropBlockAsItem_do(world1, px, py, pz, new ItemStack(blockidTarget, 1, bb.damageDropped(metadataTarget)));
+			if (entityliving instanceof EntityPlayer) {
+				bb.harvestBlock(pWorld, (EntityPlayer)entityliving, px, py, pz, metadataTarget);
+			}
+			if (pWorld.loadedEntityList.size() <= llastecount) {
+				bb.dropBlockAsItem_do(pWorld, px, py, pz, bb.createStackedBlock(metadataTarget));
+			}
 		}
 		for (int ly = (Block.blocksList[blockidTarget] instanceof BlockLog) ? 0 : -1; ly < 2; ly ++) {
 			for (int z = -1; z < 2; z++) {
 				for (int x = -1; x < 2; x++) {
-					int blockid = world1.getBlockId(px + x, py + ly, pz + z);
+					int blockid = pWorld.getBlockId(px + x, py + ly, pz + z);
 					if (blockid == blockidTarget || (Block.blocksList[blockidOrig] instanceof BlockLog && Block.blocksList[blockid] instanceof BlockLeavesBase)) {
-						int blockmeta = world1.getBlockMetadata(px + x, py + ly, pz + z);
+						int blockmeta = pWorld.getBlockMetadata(px + x, py + ly, pz + z);
 						int lcount = count;
 						if (mod_IFB_FrenchBread.leavesBlockIDs.contains(blockid)) {
 							blockmeta &= 0x03;
@@ -228,8 +219,8 @@ public class IFB_ItemFrenchBread extends ItemFood {
 						} else if (Block.blocksList[blockid] instanceof BlockMushroomCap) {
 							blockmeta = metadataOrig;
 						}
-						if (blockmeta == metadataOrig) {
-							checkTATHUJIN(itemstack, blockidOrig, px + x, py + ly, pz + z, metadataOrig, entityliving, blockid, blockmeta, lcount);
+						if ((blockmeta & 0x03) == (metadataOrig & 0x03)) {
+							checkTATHUJIN(itemstack, pWorld, blockidOrig, px + x, py + ly, pz + z, metadataOrig, entityliving, blockid, blockmeta, lcount);
 						}
 					}
 				}
@@ -261,40 +252,46 @@ public class IFB_ItemFrenchBread extends ItemFood {
 	}
 
 
-	public static void setDruggedEffects(ItemStack itemstack, int[] eff) {
+	public static void setDruggedEffects(ItemStack itemstack, List<PotionEffect> eff) {
 		// ドーピング効果を設定
+		if (eff == null || eff.isEmpty()) return;
 		if (!itemstack.hasTagCompound()) {
 			itemstack.setTagCompound(new NBTTagCompound());
 		}
-		NBTTagCompound nbttagcompound1 = itemstack.getTagCompound();
-		if (nbttagcompound1 == null) {
-			return;
-		}
-		if(!nbttagcompound1.hasKey("potions")) {
-			nbttagcompound1.setTag("potions", new NBTTagCompound("potions"));
-		}
-		NBTTagCompound nbttagcompound2 = nbttagcompound1.getCompoundTag("potions");
-		for (int i = 0; i < eff.length; i++) {
-			nbttagcompound2.setInteger(Integer.toString(i), eff[i]);
+		NBTTagCompound lnbttag = itemstack.getTagCompound();
+		NBTTagList lnbtlist = new NBTTagList();
+		lnbttag.setTag("CustomPotionEffects", lnbtlist);
+		for (PotionEffect lpe : eff) {
+			lnbttag = new NBTTagCompound();
+			lnbtlist.appendTag(lnbttag);
+			lpe.writeCustomPotionEffectToNBT(lnbttag);
 		}
 	}
 
-	public static int[] getDruggedEffects(ItemStack itemstack) {
+	public static List getDruggedEffects(ItemStack itemstack) {
 		// ドーピング効果を取り出す
-		int eff[] = {0, 0, 0, 0, 0, 0};
-
-		if (!itemstack.hasTagCompound()) {
-			return null;
+		List<PotionEffect> llist = new ArrayList<PotionEffect>();
+		NBTTagCompound lnbttag = itemstack.getTagCompound();
+		
+		if (lnbttag != null) {
+			if (lnbttag.hasKey("potions")) {
+				lnbttag = lnbttag.getCompoundTag("potions");
+				for (int i = 0; i < 6; i++) {
+					List<PotionEffect> lget = Item.potion.getEffects(lnbttag.getInteger(Integer.toString(i)));
+					if (lget != null) {
+						llist.addAll(lget);
+					}
+				}
+			} else if (lnbttag.hasKey("CustomPotionEffects")) {
+				NBTTagList lnbtlist = lnbttag.getTagList("CustomPotionEffects");
+				for (int li = 0; li < lnbtlist.tagCount(); li++) {
+					lnbttag = (NBTTagCompound)lnbtlist.tagAt(li);
+					llist.add(PotionEffect.readCustomPotionEffectFromNBT(lnbttag));
+				}
+			}
 		}
-		NBTTagCompound nbttagcompound1 = itemstack.getTagCompound();
-		if(nbttagcompound1 == null || !nbttagcompound1.hasKey("potions")) {
-			return null;
-		}
-		NBTTagCompound nbttagcompound2 = nbttagcompound1.getCompoundTag("potions");
-		for (int i = 0; i < eff.length; i++) {
-			eff[i] = nbttagcompound2.getInteger(Integer.toString(i));
-		}
-		return eff;
+		
+		return llist;
 	}
 
 }
